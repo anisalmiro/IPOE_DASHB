@@ -1,0 +1,144 @@
+::-
+title- "Analisys"
+author- "Anisio & Julio"
+date- "2024-03-28"
+output- html_document
+::-
+
+
+
+```{r}
+
+#source("functions/access_db.R", encoding = "UTF-8")
+
+#Carregamento de bibliotecas e definicao de variaveis de ambiente
+source(".RProfile", encoding = "UTF-8")
+
+#Letura de bases de dados
+source("functions/1_read_db.R", encoding = "UTF-8")
+
+#limpeza de variaveis
+source("functions/2_rename_raw.R", encoding = "UTF-8")
+
+
+#limpando idade
+source("functions/3_clean_idade.R", encoding = "UTF-8")
+
+#Criando faixas etarias na base
+source("functions/4_clean_faixa_etaria.R", encoding = "UTF-8")
+
+#criando mes
+source("functions/5_clean_month.R", encoding = "UTF-8")
+
+
+#Criando faixas etarias na base
+source("functions/6_create_db.R", encoding = "UTF-8")
+
+
+
+#Criando faixas etarias na base
+source("functions/save_data_dash.R", encoding = "UTF-8")
+```
+
+
+```{r}
+## Plotando graficos para Dashboard
+source("functions_plots/plor_faixa_etaria.R", encoding = "UTF-8")
+Plot_Faix_etar
+#plot Faixa Etaria
+
+
+# Mostrar o gráfico de vigilancia por estado paciente
+source("functions_plots/plot_Vigi_estado_paciente.R", encoding = "UTF-8")
+Plot_summ_vigilanc
+
+
+#plotar local de atendimento por estado do paciente
+source("functions_plots/plot_local_estado_paciente.R", encoding = "UTF-8")
+# Mostrar o gráfico
+Plot_local_vigilanc
+
+
+```
+
+
+
+
+```{r}
+
+
+
+# Salvar o documento HTML em um arquivo
+htmlwidgets::saveWidget(Plot_local_vigilanc, file = "plot_vigilancia.html", selfcontained = TRUE)
+
+saveWidget(Plot_local_vigilanc, file = "TESTADOS_DISTRITOS_FAIXA_ETARIA.html")
+```
+
+
+
+```{r}
+
+#Exportando bases de dados para Dashboard
+
+
+
+
+```
+
+
+```{r}
+#### POSITIVIDADE POR SEXO
+
+
+vig_sexo  = raw_base_rename %>%  dplyr::mutate(sexo = replace_na(sexo, "na"))
+
+str(vig_sexo)
+
+DADOS_NEW1 <- vig_sexo %>% dplyr::filter(RESULTADO1c == "2_Positivo") %>% dplyr::group_by(provincia, sexo) %>% dplyr::summarise(N=n())
+     DADOS_NEW1
+ DADOS_FINAL = DADOS_NEW1
+
+    
+AAA =  DADOS_FINAL %>%  hchart(
+    'column', hcaes(x = 'DISTRITO', y = 'N', group = 'SEXO'), dataLabels = list(enabled = TRUE, style = list(fontSize = "18px")),
+    stacking = "normal"
+    ) %>%
+  hc_colors(c("#ad2f30", "#32A594","#EFC000FF")) %>%
+    hc_yAxis(labels=list(
+			style= list (
+				fontSize= '18px',
+				color= 'black'
+			))) %>%    hc_xAxis(labels=list(
+			style= list (
+				fontSize= '18px',
+				color= 'black'
+			))) %>% 
+ hc_tooltip(crosshairs = TRUE,
+                            shared = TRUE, borderWidth = 5) %>%
+       
+      hc_title(
+          text = "Positivos por sexo<i></i> vs <b>Distritos</b>",
+          margin = 20,
+          align = "left",
+          style = list(color = "#22A884", useHTML = TRUE)
+        ) %>%
+        hc_add_theme(hc_theme_google()) %>%
+        hc_exporting(enabled = TRUE) 
+    
+
+AAA
+htmlwidgets::saveWidget(AAA, file="POSITIVIDADES_DISTRITOS_SEXO.html");getwd()
+
+
+```
+
+
+
+
+```{r}
+
+```
+
+  
+
+
